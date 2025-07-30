@@ -16,8 +16,8 @@
 
 # 🎧 **Pink Noise Generator & Oniromancy**
 
-## Une version francaise est disponible dans le dossier FR
-
+## Une version francaise est disponible dans la branche FR
+---
 ---
 
 ## 📌 **Overview**
