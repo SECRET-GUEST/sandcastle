@@ -35,8 +35,7 @@ The interface provides simple guidance on:
 ## 🚀 **Usage**
 
 1. **Run the program**
-
-Double-click:
+   Double-click:
 
 ```
 START.bat
@@ -44,7 +43,7 @@ START.bat
 
 *(No manual installation required — everything is handled automatically.)*
 
-2. **Follow on-screen instructions**
+2. **Follow the on-screen instructions**
 
 * Enter the **total duration** of the pink noise (in seconds).
 * Enter the **fade-out duration** (in seconds).
@@ -59,6 +58,32 @@ scripts/Assets/SFX/Suggests/
 ```
 
 * They will be automatically integrated and normalized in the final audio.
+
+---
+
+## 🖥 **Optional: Automatic Shutdown**
+
+You can schedule your PC to shut down automatically after the pink noise finishes:
+
+```powershell
+shutdown /s /t 8000
+```
+
+Where:
+
+* `/s` = Shutdown (complete power off)
+* `/t` = Time delay before shutdown (in seconds)
+
+**Examples:**
+
+* `shutdown /s /t 7200` → shutdown after **2 hours**
+* `shutdown /s /t 14400` → shutdown after **4 hours**
+
+**Cancel a scheduled shutdown:**
+
+```powershell
+shutdown /a
+```
 
 ---
 
@@ -87,11 +112,11 @@ Project/
 
 Suggestions are automatically placed just before or during the REM phase of each cycle (\~90 min):
 
-| Cycle | REM Start (approx.) | Suggestion Placement |
-| ----- | ------------------- | -------------------- |
-| 1     | 70–90 min           | \~1h15 – 1h30        |
-| 2     | 160–180 min         | \~2h45 – 3h          |
-| 3     | 250–270 min         | \~4h15 – 4h30        |
+| Cycle | REM Start (approx.) | Placement suggestion | Durée en secondes (min → max) |
+| ----- | ------------------- | -------------------- | ----------------------------- |
+| 1     | 70–90 min           | \~1h15 – 1h30        | 4500 – 5400 s                 |
+| 2     | 160–180 min         | \~2h45 – 3h          | 9900 – 10800 s                |
+| 3     | 250–270 min         | \~4h15 – 4h30        | 15300 – 16200 s               |
 
 ---
 
