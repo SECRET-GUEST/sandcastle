@@ -1,3 +1,5 @@
+#OPENING | https://www.youtube.com/watch?v=_85LaeTCtV8 :3
+
 import subprocess, sys, time, os, importlib, traceback, shutil
 
 import tkinter as tk
@@ -948,6 +950,7 @@ if __name__ == "__main__":
         spinner.loading_stop("Enregistrement annulé")
         time.sleep(1)
         sys.exit()
+
 
 
 
