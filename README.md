@@ -14,7 +14,7 @@
 
 ![ALPHA](https://img.shields.io/badge/ALPHA-red)
 
-# 🎧 **Pink Noise Sleep Generator**
+# 🎧 ** Generateur de bruit rose pour dormir **
 
 ---
 
@@ -26,9 +26,9 @@ Il peut intégrer automatiquement des **suggestions audio personnalisées** aux 
 ### Fonctionnalités principales
 
 * 🎶 Génération de bruit rose haute qualité (44.1 kHz).
-* 🌊 Option de **modulation en vagues** (respiration).
+* 🌊 **Modulation du bruit en vagues** pour caler sur la respiration (optionnel) .
 * 🥁 **Kick basse fréquence** agissant comme un métronome cardiaque (optionnel).
-* 🗣️ Intégration automatique de **suggestions vocales personnalisées**.
+* 🗣️ Intégration automatique de **suggestions vocales personnalisées**(optionnel).
 * ⏳ Placement intelligent des suggestions selon les **cycles REM**.
 * 🔄 **Randomisation contrôlée** pour éviter la répétition et préserver le bruit rose.
 * 🎚️ **Fade-out configurable** (recommandé : 1800 s = 30 min).
@@ -60,7 +60,7 @@ scripts/Assets/SFX/Suggests/
 
 ## 🖥 **Optionnel : Arrêt automatique du PC**
 
-Il est possible de programmer l’arrêt automatique du PC à la fin de la lecture du bruit rose :
+Il est possible de programmer l’arrêt automatique du PC (WinDdos) à la fin de la lecture du bruit rose avec :
 
 ```powershell
 shutdown /s /t 8000
@@ -136,4 +136,5 @@ Les suggestions sont automatiquement placées juste avant ou pendant la phase RE
 ---
 
 💡 **Astuce** : Utilisez **votre propre voix** pour les suggestions. Le cerveau la perçoit comme une pensée interne → impact renforcé.
+
 
