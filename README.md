@@ -140,3 +140,5 @@ Suggestions are automatically placed just before or during the REM phase of each
 ---
 
 💡 **Tip**: Use **your own voice** for suggestions. The brain recognizes it as an internal thought → stronger impact.
+
+<img width="1024" height="1024" alt="sandcastle" src="https://github.com/user-attachments/assets/47f28bb7-7c3e-46ff-b2b5-4601de0aee12" />
