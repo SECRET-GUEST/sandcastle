@@ -12,7 +12,7 @@ except Exception:
 
 import numpy as np
 import soundfile as sf
-from scipy.signal import lfilter
+from scipy.signal import lfilter, resample_poly
 
 # ================================
 # 🔧 Librairies requises
@@ -389,6 +389,60 @@ def compute_rem_windows(total_seconds,
     return windows
 
 
+def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
+    """
+    Rééchantillonne `x` de sr_in → sr_out avec filtrage polyphasé.
+    - Pas besoin de lib externe (utilise scipy).
+    - Préserve une bonne qualité (fenêtre de Kaiser par défaut).
+    """
+    if sr_in == sr_out:
+        return x
+    from math import gcd
+    g = gcd(sr_in, sr_out)
+    up = sr_out // g
+    down = sr_in // g
+    return resample_poly(x, up, down, padtype="line").astype(np.float32, copy=False)
+
+def _ensure_mono_float32(x: np.ndarray) -> np.ndarray:
+    """
+    Convertit le signal en :
+      - mono (moyenne des canaux si stéréo),
+      - float32 normalisé [-1, 1].
+    """
+    if x.ndim == 2:
+        x = np.mean(x, axis=1)
+    return x.astype(np.float32, copy=False)
+
+def load_audio_any(fpath: str, target_sr: int):
+    """
+    Charge un fichier audio (WAV ou MP3 si supporté par libsndfile).
+    Étapes :
+      - Lecture avec soundfile
+      - Conversion en mono float32
+      - Normalisation
+      - Rééchantillonnage à `target_sr` si besoin
+    Retourne (signal, target_sr) ou (None, None) si échec.
+    """
+    try:
+        data, sr = sf.read(fpath, always_2d=False)
+    except Exception as e:
+        print(f"⚠️ Impossible de lire {os.path.basename(fpath)} : {e}")
+        return None, None
+
+    # → Mono + float32
+    data = _ensure_mono_float32(data)
+
+    # → Normalisation
+    try:
+        data = normalize_audio(data)
+    except NameError:
+        peak = np.max(np.abs(data)) or 1.0
+        data = (data / peak) * 0.95
+
+    # → Rééchantillonnage
+    data = _resample_to_target(data, sr, target_sr)
+    return data, target_sr
+
 
 def integrate_suggestions(pink_noise, sample_rate, duree_totale, start_delay_sec):
     """
@@ -404,7 +458,8 @@ def integrate_suggestions(pink_noise, sample_rate, duree_totale, start_delay_sec
         print("⚠️ Dossier de suggestions introuvable :", suggest_path)
         return pink_noise
 
-    file_names = [f for f in os.listdir(suggest_path) if f.lower().endswith(".wav")]
+    # ✅ Accepte WAV et MP3
+    file_names = [f for f in os.listdir(suggest_path) if f.lower().endswith((".wav", ".mp3"))]
     if not file_names:
         print("⚠️ Aucun fichier de suggestion trouvé.")
         return pink_noise
@@ -460,18 +515,15 @@ def integrate_suggestions(pink_noise, sample_rate, duree_totale, start_delay_sec
         while used_time_s < occ_limit_s and passes < max_passes:
             for idx in order:
                 fpath = file_paths[idx]
-                try:
-                    voice_data, sr = sf.read(fpath)
-                except Exception as e:
-                    print(f"⚠️ Impossible de lire {os.path.basename(fpath)} :", e)
+
+                # ✅ Lecture universelle + rééchantillonnage auto à `sample_rate`
+                voice_data, _sr = load_audio_any(fpath, sample_rate)
+                if voice_data is None:
+                    # MP3 non supporté par le build libsndfile → ignorer proprement
+                    if fpath.lower().endswith(".mp3"):
+                        print(f"⚠️ {os.path.basename(fpath)} ignoré (MP3 non supporté par votre libsndfile).")
                     continue
 
-                if sr != sample_rate:
-                    print(f"⚠️ {os.path.basename(fpath)} ignoré (sample rate {sr} ≠ {sample_rate}).")
-                    continue
-
-                voice_data = ensure_mono(voice_data).astype(np.float32)
-                voice_data = normalize_audio(voice_data)
                 voice_len_s = len(voice_data) / sample_rate
 
                 # Limite d'occupation de la fenêtre
@@ -520,7 +572,6 @@ def integrate_suggestions(pink_noise, sample_rate, duree_totale, start_delay_sec
                   f"suggestions={len(placed_intervals)}")
 
     return pink_noise
-
 
 
 
@@ -885,3 +936,4 @@ if __name__ == "__main__":
         spinner.loading_stop("Enregistrement annulé")
         time.sleep(1)
         sys.exit()
+
