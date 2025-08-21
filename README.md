@@ -16,19 +16,26 @@
 
 # 🎧 **Pink Noise Generator & Oniromancy**
 
-## Une version francaise est disponible dans la branche FR
+## [Une version francaise est disponible dans la branche FR](https://github.com/SECRET-GUEST/sandcastle/tree/FR)
 ---
 ---
 
 ## 📌 **Overview**
 
-This program generates **filtered pink noise** to improve sleep quality, and can automatically integrate **audio suggestions** (voice, sounds) at the optimal times during REM sleep cycles to help **influence dreams (oniromancy)**.
+This program generates **filtered pink noise**, scientifically recognized for improving the quality of deep sleep.
+It can automatically integrate **personalized audio suggestions** at optimal times during REM sleep cycles to **influence and guide dreams**.
 
-The interface provides simple guidance on:
+### Key Features
 
-* **Sleep cycles** and their durations.
-* The role of the **fade-out**.
-* Automatic placement of audio suggestions.
+* 🎶 High-quality pink noise generation (44.1 kHz).
+* 🌊 **Wave-like modulation** to sync with breathing (optional).
+* 🥁 **Low-frequency kick** acting as a heart-rate metronome (optional).
+* 🗣️ Automatic integration of **custom voice suggestions** (optional).
+* ⏳ Smart placement of suggestions according to **REM cycles**.
+* 🔄 **Controlled randomization** to avoid repetition and preserve pink noise.
+* 🎚️ **Configurable fade-out** (recommended: 1800 s = 30 min).
+* 📂 Output in `.wav` (final file + debug intermediates).
+* ⚡ Automatic dependency installation (virtualenv or global).
 
 ---
 
@@ -41,15 +48,7 @@ The interface provides simple guidance on:
 START.bat
 ```
 
-*(No manual installation required — everything is handled automatically.)*
-
-2. **Follow the on-screen instructions**
-
-* Enter the **total duration** of the pink noise (in seconds).
-* Enter the **fade-out duration** (in seconds).
-* Choose whether to **add voice suggestions**.
-
-3. **If suggestions are enabled**
+2. **If suggestions are enabled**
 
 * Place your `.wav` files in:
 
@@ -57,13 +56,13 @@ START.bat
 scripts/Assets/SFX/Suggests/
 ```
 
-* They will be automatically integrated and normalized in the final audio.
+* They will be automatically integrated and normalized into the final audio.
 
 ---
 
-## 🖥 **Optional: Automatic Shutdown**
+## 🖥 **Optional: Automatic PC Shutdown**
 
-You can schedule your PC to shut down automatically after the pink noise finishes:
+You can schedule your PC (Windows) to shut down automatically at the end of playback using:
 
 ```powershell
 shutdown /s /t 8000
@@ -71,8 +70,8 @@ shutdown /s /t 8000
 
 Where:
 
-* `/s` = Shutdown (complete power off)
-* `/t` = Time delay before shutdown (in seconds)
+* `/s` = Full shutdown
+* `/t` = Delay before shutdown (in seconds)
 
 **Examples:**
 
@@ -91,7 +90,7 @@ shutdown /a
 
 ```
 Project/
-│   START.bat           → Launches the entire program
+│   START.bat           → Launches the full program
 │
 └───scripts
    ├───Assets
@@ -110,31 +109,34 @@ Project/
 
 ## ⏳ **Cycles & Suggestion Placement**
 
-Suggestions are automatically placed just before or during the REM phase of each cycle (\~90 min):
+Suggestions are automatically placed just before or during the REM phase of each \~90-minute sleep cycle:
 
-| Cycle | REM Start (approx.) | Placement suggestion | Durée en secondes (min → max) |
-| ----- | ------------------- | -------------------- | ----------------------------- |
-| 1     | 70–90 min           | \~1h15 – 1h30        | 4500 – 5400 s                 |
-| 2     | 160–180 min         | \~2h45 – 3h          | 9900 – 10800 s                |
-| 3     | 250–270 min         | \~4h15 – 4h30        | 15300 – 16200 s               |
+| Cycle | REM start (approx.) | Suggestion placement | Time in seconds (min → max) |
+| ----- | ------------------- | -------------------- | --------------------------- |
+| 1     | 70–90 min           | \~1h15 – 1h30        | 4500 – 5400 s               |
+| 2     | 160–180 min         | \~2h45 – 3h          | 9900 – 10800 s              |
+| 3     | 250–270 min         | \~4h15 – 4h30        | 15300 – 16200 s             |
 
 ---
 
-## ⚠️ **Warning**
+## ⚠️ **Disclaimer**
 
-* Without fade-out, REM is amplified → more creativity but **less physical recovery**.
-* Overusing this method can cause **fatigue and sleep disruption**.
-* Inspired by Salvador Dalí’s micro-sleep technique (*Les Rêveries d’un mangeur de pain*).
+* Without fade-out, REM phases may be amplified → **more dreams, but less physical recovery**.
+* Prolonged use may lead to **fatigue** or **sleep disturbances**.
+* The impact of audio suggestions depends heavily on **individual sensitivity**.
+* Guidance features (heart-rate or breathing synchronization) may feel disturbing for some sensitive users.
+  👉 If you experience discomfort (palpitations, anxiety, unease), **disable these options**.
 
 ---
 
 ## 📜 **References**
 
-* Ngo, Hong-Viet V., et al. *Enhancing Slow Wave Sleep with Auditory Stimulation*. Frontiers in Human Neuroscience, 2017.
-* Dalí, Salvador. *Les Rêveries d’un mangeur de pain*.
-* *Journal of Cognitive Neuroscience*, 2015 — study on internal voice perception.
+* Ngo, Hong-Viet V., et al. [*Enhancing Slow Wave Sleep with Auditory Stimulation*](https://www.frontiersin.org/articles/10.3389/fnhum.2013.00871/full). *Frontiers in Human Neuroscience*, 2017.
+* Dalí, Salvador. [*50 Secrets of Magic Craftsmanship (1948)*.](https://www.google.fr/books/edition/50_Secrets_of_Magic_Craftsmanship/0g6QlUiqwfcC?hl=fr&gbpv=0)
+* [*Journal of Cognitive Neuroscience*, 2015 — Study on the perception of inner voices](https://direct.mit.edu/jocn/article/27/7/1308/28351/Perceiving-Inner-Speech-Voices-as-Internal-or).
+* Walker, Matthew. [*Why We Sleep: Unlocking the Power of Sleep and Dreams*](https://en.wikipedia.org/wiki/Why_We_Sleep). Scribner, 2017.
+* Carskadon, Mary A., & Dement, William C. [*Normal Human Sleep: An Overview*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2656292/). *Principles and Practice of Sleep Medicine*, 2005.
 
 ---
 
-💡 **Tip**: Use your **own voice** for suggestions. The brain identifies it as an internal thought → stronger impact.
-
+💡 **Tip**: Use **your own voice** for suggestions. The brain recognizes it as an internal thought → stronger impact.
