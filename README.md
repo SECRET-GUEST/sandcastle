@@ -132,12 +132,13 @@ Les suggestions sont automatiquement placées juste avant ou pendant la phase RE
 * Ngo, Hong-Viet V., et al. [*Enhancing Slow Wave Sleep with Auditory Stimulation*](https://www.frontiersin.org/articles/10.3389/fnhum.2013.00871/full). *Frontiers in Human Neuroscience*, 2017.
 * Dalí, Salvador. *Les Rêveries d’un mangeur de pain*.
 * [*Journal of Cognitive Neuroscience*, 2015 — étude sur la perception des voix internes](https://direct.mit.edu/jocn/article/27/7/1308/28351/Perceiving-Inner-Speech-Voices-as-Internal-or).
-* Walker, Matthew. [*Why We Sleep: Unlocking the Power of Sleep and Dreams*](https://www.penguinrandomhouse.com/books/557667/why-we-sleep-by-matthew-walker-phd/). Scribner, 2017.
+* Walker, Matthew. [*Why We Sleep: Unlocking the Power of Sleep and Dreams*](https://en.wikipedia.org/wiki/Why_We_Sleep). Scribner, 2017.
 * Carskadon, Mary A., & Dement, William C. [*Normal Human Sleep: An Overview*](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2656292/). *Principles and Practice of Sleep Medicine*, 2005.
 
 ---
 
 💡 **Astuce** : Utilisez **votre propre voix** pour les suggestions. Le cerveau la perçoit comme une pensée interne → impact renforcé.
+
 
 
 
