@@ -1,3 +1,5 @@
+# OPENING | https://www.youtube.com/watch?v=_85LaeTCtV8
+
 import sys
 import time
 import threading
@@ -35,3 +37,4 @@ class Spinner:
         sys.stdout.flush()
         final_msg = final_message if final_message else f"{self.message} completed"
         print(f"\n✅ {final_msg}\n")
+
