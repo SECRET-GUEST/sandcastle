@@ -1,3 +1,5 @@
+# OPENING | https://www.youtube.com/watch?v=_85LaeTCtV8
+
 import sys, time, os, threading, msvcrt, winsound
 
 skip_intro = False
@@ -243,3 +245,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
