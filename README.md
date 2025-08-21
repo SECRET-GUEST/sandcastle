@@ -14,40 +14,39 @@
 
 ![ALPHA](https://img.shields.io/badge/ALPHA-red)
 
-# 🎧 **Pink Noise Generator & Oniromancy**
+# 🎧 **Pink Noise Sleep Generator**
 
 ---
 
 ## 📌 **Aperçu**
 
-Ce programme génère du **bruit rose filtré** afin d’améliorer la qualité du sommeil, et peut intégrer automatiquement des **suggestions audio** (voix, sons) aux moments optimaux des cycles de sommeil paradoxal (REM) afin d’**influencer les rêves (oniromancie)**.
+Ce programme génère du **bruit rose filtré** scientifiquement reconnu pour améliorer la qualité du sommeil profond.
+Il peut intégrer automatiquement des **suggestions audio personnalisées** aux moments optimaux des cycles de sommeil paradoxal (REM), afin de **favoriser l’orientation des rêves**.
 
-L’interface fournit des explications simples sur :
+### Fonctionnalités principales
 
-* Les **cycles de sommeil** et leur durée.
-* Le rôle du **fade-out**.
-* Le placement automatique des suggestions audio.
+* 🎶 Génération de bruit rose haute qualité (44.1 kHz).
+* 🌊 Option de **modulation en vagues** (respiration).
+* 🥁 **Kick basse fréquence** agissant comme un métronome cardiaque (optionnel).
+* 🗣️ Intégration automatique de **suggestions vocales personnalisées**.
+* ⏳ Placement intelligent des suggestions selon les **cycles REM**.
+* 🔄 **Randomisation contrôlée** pour éviter la répétition et préserver le bruit rose.
+* 🎚️ **Fade-out configurable** (recommandé : 1800 s = 30 min).
+* 📂 Sauvegarde en `.wav` (fichier final + intermédiaires pour debug).
+* ⚡ Installation automatique des dépendances (venv ou globale).
 
 ---
 
 ## 🚀 **Utilisation**
 
 1. **Lancer le programme**
-   Double-cliquer sur :
+   Double-cliquer sur :
 
 ```
 START.bat
 ```
 
-*(Aucune installation manuelle nécessaire — tout est géré automatiquement.)*
-
-2. **Suivre les instructions affichées**
-
-* Entrer la **durée totale** du bruit rose (en secondes).
-* Entrer la **durée du fade-out** (en secondes).
-* Choisir d’**ajouter ou non des suggestions vocales**.
-
-3. **Si les suggestions sont activées**
+2. **Si les suggestions sont activées**
 
 * Placer vos fichiers `.wav` dans :
 
@@ -120,9 +119,11 @@ Les suggestions sont automatiquement placées juste avant ou pendant la phase RE
 
 ## ⚠️ **Avertissement**
 
-* Sans fade-out, le REM est amplifié → plus de créativité mais **moins de récupération physique**.
-* Une utilisation excessive peut provoquer **fatigue et perturbations du sommeil**.
-* Inspiré de la technique des micro-siestes de Salvador Dalí (*Les Rêveries d’un mangeur de pain*).
+* Sans fade-out, les phases REM peuvent être amplifiées → **plus de rêves, mais moins de récupération physique**.
+* Une utilisation prolongée peut entraîner **fatigue** ou **perturbations du sommeil**.
+* L’impact des suggestions audio dépend fortement de la **sensibilité individuelle**.
+* Les fonctions de guidage (rythme cardiaque, respiration) peuvent être perçues comme dérangeantes par certaines personnes sensibles.
+  👉 Si vous ressentez un inconfort (palpitations, malaise, anxiété), **désactivez ces options**.
 
 ---
 
@@ -135,3 +136,4 @@ Les suggestions sont automatiquement placées juste avant ou pendant la phase RE
 ---
 
 💡 **Astuce** : Utilisez **votre propre voix** pour les suggestions. Le cerveau la perçoit comme une pensée interne → impact renforcé.
+
