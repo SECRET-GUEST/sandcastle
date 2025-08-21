@@ -1,4 +1,4 @@
-#OPENING | https://www.youtube.com/watch?v=_85LaeTCtV8 :3
+# OPENING | https://www.youtube.com/watch?v=_85LaeTCtV8
 
 import subprocess, sys, time, os, importlib, traceback, shutil
 
@@ -950,6 +950,7 @@ if __name__ == "__main__":
         spinner.loading_stop("Enregistrement annulé")
         time.sleep(1)
         sys.exit()
+
 
 
 
