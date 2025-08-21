@@ -139,7 +139,7 @@ def main():
     typewriter("Sans fade-out : le sommeil profond est réduit, la phase REM est renforcée, ce qui peut augmenter la créativité mais aussi la fatigue.", delay=0.02)
     print()
     typewriter("Cette technique était utilisée par Salvador Dalí pour stimuler sa créativité grâce à des micro-sommeils interrompus.", delay=0.02)
-    typewriter("Source : Dalí, Salvador. *Les Rêveries d’un mangeur de pain* et études sur sa « technique de la clé ».", delay=0.005)
+    typewriter("Source : Salvador Dalí, 50 Secrets of Magic Craftsmanship (1948) et sa « technique de la clé ».", delay=0.005)
     print()
     typewriter("⚠️ À n’utiliser qu’occasionnellement pour éviter une fatigue chronique.", delay=0.02)
     print()
