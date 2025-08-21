@@ -282,7 +282,7 @@ def clear_temp_dir():
 
 
 # ================================
-# 🎛 Audio utils
+# 🎵 Audio utils
 # ================================
 
 def smooth_fade_curve(length):
@@ -392,7 +392,7 @@ def compute_rem_windows(total_seconds,
 
 
 # ================================
-# 🎛 Suggestions audio
+# 🎵 Suggestions audio
 # ================================
 
 def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
@@ -583,7 +583,7 @@ def integrate_suggestions(pink_noise, sample_rate, duree_totale, start_delay_sec
 
 
 # ================================
-# 🥁 Kick
+# 🎵 Kick
 # ================================
 
 def synth_one_kick(sample_rate=SAMPLE_RATE, dur_sec=0.6,
@@ -948,5 +948,6 @@ if __name__ == "__main__":
         spinner.loading_stop("Enregistrement annulé")
         time.sleep(1)
         sys.exit()
+
 
 
