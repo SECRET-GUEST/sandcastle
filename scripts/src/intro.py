@@ -72,8 +72,6 @@ def draw_frame(eq_lines, unlocked_lines):
 
 def animate_frames():
     """Joue le son d’ouverture + anime SandCastle"""
-    
-    # Lancement son opening.wav en async
     sound_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Assets/SFX/SE/opening.wav"))
     if os.path.exists(sound_path):
         winsound.PlaySound(sound_path, winsound.SND_FILENAME | winsound.SND_ASYNC)
@@ -88,7 +86,6 @@ def animate_frames():
     os.system(CLS)
     print(draw_frame([1, 7], list(range(5))))
     time.sleep(0.5)
-    
 
 # === Main ===
 def main():
@@ -110,25 +107,61 @@ def main():
 
     # Animation SandCastle
     animate_frames()
+
+
     # === Infos essentielles sur le sommeil et le bruit rose ===
     typewriter("\nINFORMATION ESSENTIELLE :", delay=0.005)
+    print()
     typewriter("Le bruit rose est scientifiquement reconnu pour améliorer la qualité du sommeil profond.", delay=0.02)
+    print()
     typewriter("Source : Ngo, Hong-Viet V., et al. « Enhancing Slow Wave Sleep with Auditory Stimulation. » Frontiers in Human Neuroscience, 2017.", delay=0.005)
     print()
-    typewriter("Le sommeil se déroule en cycles d’environ 90 minutes :", delay=0.02)
+
+    # === Oniromancie ===
+    typewriter("SUGGESTIONS AUDIO :", delay=0.005)
     print()
-    typewriter("- Sommeil léger (transition vers l’endormissement).", delay=0.02)
-    typewriter("- Sommeil profond (récupération physique et réparation du corps).", delay=0.02)
-    typewriter("- Sommeil paradoxal (REM) : phase des rêves et de la créativité.", delay=0.02)
+    typewriter("Le sommeil alterne des cycles d’environ 90 minutes (léger → profond → paradoxal ; phase REM).", delay=0.02)
+    typewriter("La majorité des rêves vifs surviennent en phase REM.", delay=0.02)
+    print()
+    typewriter("Sandcastle peut diffuser vos phrases simples et positives juste avant / pendant chaque fenêtre REM couverte par votre durée :", delay=0.02)
+    typewriter("- 1ere REM : ~75–90 min après l’endormissement (≈ 4500 s).", delay=0.02)
+    typewriter("- 2e REM  : ~165–180 min (≈ 10800 s).", delay=0.02)
+    typewriter("- 3e REM  : ~255–270 min (≈ 16200 s).", delay=0.02)
+    print()
+    typewriter("si l'audio est assez long, des suggestions seront placées avant chaque fenêtre listée.", delay=0.02)
+    typewriter("Astuce : utilisez votre propre voix (mots simples, positifs). Le cerveau la perçoit comme une pensée interne, ce qui peut faciliter l’intégration.", delay=0.02)
+    print()
+    typewriter("Source : Journal of Cognitive Neuroscience, étude sur la perception des voix internes, 2015.", delay=0.005)
     print()
     print()
-    
+
     # === Comprendre les cycles REM et placement des suggestions ===
-    typewriter("Les phases REM, où la majorité des rêves surviennent, apparaissent :", delay=0.02)
-    typewriter("- Fin du 1er cycle : environ 75 à 90 minutes après endormissement (~4500 secondes).", delay=0.02)
-    typewriter("- Fin du 2e cycle : environ 165 à 180 minutes (~10800 secondes).", delay=0.02)
-    typewriter("- Fin du 3e cycle : environ 255 à 270 minutes (~16200 secondes).", delay=0.02)
-    typewriter("Les suggestions audio doivent être placées juste avant ou pendant ces fenêtres.", delay=0.02)
+
+    print()
+    print()
+
+    # === Explication vagues ===
+    typewriter("RESPIRATION GUIDÉE :", delay=0.005)
+    print()
+    typewriter("Les vagues de bruit rose simulent une respiration lente (4-2-6).", delay=0.02)
+    typewriter("Si vous décidez de les activer, inspirez 4 sec → retenez 2 sec → expirez 6 sec, calés sur les vagues.", delay=0.02)
+    print()
+    typewriter("Cette méthode est inspirée des techniques militaires d’endormissement rapide.", delay=0.02)
+    print()
+    typewriter("Source : U.S. Army Field Manual FM 22-51, Sleep Management in Combat, 1983.", delay=0.005)
+    print()
+    print()
+
+    # === Explication kick ===
+    typewriter("RYTHME CARDIAQUE :", delay=0.005)
+    print()
+    typewriter("Le kick basse fréquence agit comme un métronome cardiaque.", delay=0.02)
+    typewriter("Votre cœur tend naturellement à se synchroniser à un rythme sonore régulier", delay=0.02)
+    print()
+    typewriter("⚠️ Remarque : le kick est calé à ~60 BPM (rythme naturel du repos).", delay=0.02)
+    typewriter("Pour la majorité des personnes cela favorise l’apaisement, mais si vous avez un trouble cardiaque ou ressentez une gene, désactivez cette option.", delay=0.02)
+    print()
+    typewriter("Source : Bernardi, L. et al. « Cardiovascular, cerebrovascular, and respiratory changes induced by different types of music. » Circulation, 2009.", delay=0.005)
     print()
     print()
 
@@ -137,22 +170,11 @@ def main():
     typewriter("Utiliser un fade-out progressif (~30 minutes) réduit le risque de réveil brutal à la fin d’un cycle REM.", delay=0.02)
     print()
     typewriter("Sans fade-out : le sommeil profond est réduit, la phase REM est renforcée, ce qui peut augmenter la créativité mais aussi la fatigue.", delay=0.02)
-    print()
     typewriter("Cette technique était utilisée par Salvador Dalí pour stimuler sa créativité grâce à des micro-sommeils interrompus.", delay=0.02)
-    typewriter("Source : Salvador Dalí, 50 Secrets of Magic Craftsmanship (1948) et sa « technique de la clé ».", delay=0.005)
-    print()
     typewriter("⚠️ À n’utiliser qu’occasionnellement pour éviter une fatigue chronique.", delay=0.02)
     print()
+    typewriter("Source : Salvador Dalí, 50 Secrets of Magic Craftsmanship (1948) et sa « technique de la clé ».", delay=0.005)
     print()
-
-    # === Oniromancie ===
-    typewriter("ONIROMANCIE :", delay=0.005)
-    typewriter("L’oniromancie est l’art d’orienter ses rêves à l’aide de suggestions audio ciblées.", delay=0.02)
-    typewriter("Ce processus repose sur la psychologie et les cycles REM (pas de magie).", delay=0.02)
-    typewriter("Les suggestions audio doivent être diffusées durant les moments REM identifiés.", delay=0.02)
-    typewriter("Votre propre voix est plus efficace car le cerveau la reconnaît comme une pensée interne, réduisant la résistance aux suggestions.", delay=0.02)
-    print()
-    typewriter("Source : *Journal of Cognitive Neuroscience*, étude sur la perception des voix internes, 2015.", delay=0.005)
     print()
 
 
@@ -176,20 +198,45 @@ def main():
         typewriter("Placez-les dans le dossier : scripts/Assets/SFX/Suggests", delay=0.02)
         typewriter("Ils seront utilisés automatiquement par le programme.", delay=0.02)
 
-        # Ouvre automatiquement le dossier de suggestions
         se_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Assets/SFX/Suggests"))
         os.startfile(se_path)
 
     # === Saisie durées bruit rose ===
-    duree = typed_input("\nEntrez la durée totale en secondes (ex: 7200 pour 2h) : ")
-    print()
-    fade = typed_input("\nEntrez la durée du fade-out en secondes (ex: 1800 pour 30 min) : ")
+    while True:
+        try:
+            duree = int(typed_input("\nEntrez la durée totale en secondes (minimum 7200 = 2h) : "))
+            if duree < 7200:
+                print("❌ Durée trop courte. Minimum requis : 7200 secondes (2h).")
+                continue
+            break
+        except ValueError:
+            print("❌ Veuillez entrer un nombre valide.")
 
-    # === Lancement script bruit_rose ===
-    print("\nLancement du script de bruit rose...\n")
+    while True:
+        try:
+            fade = int(typed_input("Entrez la durée du fade-out en secondes (0 = désactivé, recommandé ≥ 1800 = 30 min) : "))
+            if fade >= duree:
+                print("❌ Le fade-out doit être inférieur à la durée totale.")
+                continue
+            if fade == 0:
+                print("⚠️ Aucun fade-out : risque de réveil brutal.")
+            elif fade < 1800:
+                print("⚠️ Attention : un fade-out plus court que 30 minutes peut provoquer des réveils plus brusques.")
+            break
+        except ValueError:
+            print("❌ Veuillez entrer un nombre valide.")
+
+    # === Nouveaux choix kick & vagues ===
+    kick_choice = typed_input("\nActiver le kick (rythme cardiaque) ? (O/n) : ").strip().lower()
+    waves_choice = typed_input("Activer les vagues (respiration guidée) ? (O/n) : ").strip().lower()
+    kick_enabled = (kick_choice != "n")
+    waves_enabled = (waves_choice != "n")
+
+    # === Lancement script bruit_rose avec options ===
+    print("\n Création du chateau de sable ...\n")
     script_dir = os.path.dirname(os.path.abspath(__file__))  
     bruit_rose_path = os.path.join(script_dir, "bruit_rose.py")
-    os.system(f'python "{bruit_rose_path}" {duree} {fade}')
+    os.system(f'python "{bruit_rose_path}" {duree} {fade} {int(kick_enabled)} {int(waves_enabled)}')
     
     # Stop le son une fois l’animation terminée
     winsound.PlaySound(None, winsound.SND_PURGE)
