@@ -244,7 +244,7 @@ def clear_temp_dir():
 
 
 # ================================
-# 🎛 Audio utils
+# 🎵 Audio utils
 # ================================
 
 def smooth_fade_curve(length):
@@ -331,7 +331,10 @@ def compute_rem_windows(total_seconds,
     return windows
 
 
-from scipy.signal import resample_poly
+# ================================
+# 🎵 Audio Suggests
+# ================================
+
 
 def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
     """High-quality resample using polyphase filtering (no extra deps)."""
@@ -345,6 +348,7 @@ def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
     # resample_poly expects shape (n,) or (n, ch). We’re mono before calling.
     y = resample_poly(x, up, down, padtype="line")  # default Kaiser window
     return y.astype(np.float32, copy=False)
+
 
 def _ensure_mono_float32(x: np.ndarray) -> np.ndarray:
     """Convert to mono float32 in [-1, 1]."""
@@ -512,7 +516,7 @@ def integrate_suggestions(pink_noise, sample_rate, total_duration, start_delay_s
     return pink_noise
 
 # ================================
-# 🥁 Kick
+# 🎵 Kick
 # ================================
 
 def synth_one_kick(sample_rate=SAMPLE_RATE, dur_sec=0.6,
@@ -619,6 +623,84 @@ def build_kick_track(total_len_samples, sample_rate=SAMPLE_RATE):
 
     return kick_track
 
+# ================================
+# 🎵 Pink noise + mix generation
+# ================================
+
+def apply_ducking(pink_noise, voice, start_sample, sample_rate):
+    """
+    Applies ducking: attenuates pink noise to make space for inserted voice.
+    - pink_noise   : pink noise signal
+    - voice        : voice signal
+    - start_sample : insertion position (samples)
+    - sample_rate  : sampling rate
+    """
+    fade_samples = int(FADE_SEC * sample_rate)
+    end_sample = start_sample + len(voice)
+
+    # Safety: avoid overflow beyond pink noise length
+    if end_sample + fade_samples > len(pink_noise):
+        end_sample = len(pink_noise) - fade_samples
+
+    # Fade curve around voice
+    fade_curve = smooth_fade_curve(fade_samples)
+    sustain_gain = db_to_lin(DUCK_DB)   # background attenuation
+    voice_gain   = db_to_lin(VOICE_DB)  # voice amplification
+
+    # Progressive fade before voice
+    pink_noise[start_sample:start_sample+fade_samples] *= (
+        fade_curve * (1 - sustain_gain) + sustain_gain
+    )
+    # Constant attenuation during voice
+    pink_noise[start_sample+fade_samples:end_sample] *= sustain_gain
+    # Progressive return after voice
+    pink_noise[end_sample:end_sample+fade_samples] *= (
+        fade_curve[::-1] * (1 - sustain_gain) + sustain_gain
+    )
+
+    # Add voice
+    pink_noise[start_sample:end_sample] += voice * voice_gain
+    return pink_noise
+
+
+def build_pink_waves_envelope(total_len_samples, sr):
+    """
+    1D envelope to modulate pink noise in wave-like patterns.
+    """
+    window_samples = int(min(PINK_WAVES_WINDOW_SEC, total_len_samples / sr) * sr)
+    if window_samples <= 0:
+        return np.ones(total_len_samples, dtype=np.float32)
+
+    upN   = max(1, int(PINK_WAVE_UP_SEC   * sr))
+    holdN = max(1, int(PINK_WAVE_HOLD_SEC * sr))
+    downN = max(1, int(PINK_WAVE_DOWN_SEC * sr))
+
+    # Smooth curves: rise = inverted fade, fall = normal fade
+    up   = smooth_fade_curve(upN)[::-1]                  # 0 -> 1
+    hold = np.ones(holdN, dtype=np.float32)              # 1
+    down = smooth_fade_curve(downN)                      # 1 -> 0
+
+    cycle = np.concatenate([up, hold, down]).astype(np.float32)
+
+    # Scale between MIN and MAX
+    amp_min, amp_max = PINK_WAVE_MIN_AMP, PINK_WAVE_MAX_AMP
+    cycle = amp_min + (amp_max - amp_min) * cycle
+
+    # Repeat cycle to cover window
+    reps = window_samples // len(cycle) + 1
+    env_section = np.tile(cycle, reps)[:window_samples]
+
+    # Global envelope = env_section (window 30 min), then 1.0
+    env = np.ones(total_len_samples, dtype=np.float32)
+    env[:window_samples] = env_section
+    return env
+
+
+# ================================
+# 🚀 Main script
+# ================================
+
+
 
 def main_generate(total_duration, fade_out, save_path, kick_enabled=True, waves_enabled=True):
     """
@@ -698,82 +780,6 @@ def main_generate(total_duration, fade_out, save_path, kick_enabled=True, waves_
         clear_temp_dir()
 
 
-# ================================
-# 🎵 Pink noise + mix generation
-# ================================
-
-def apply_ducking(pink_noise, voice, start_sample, sample_rate):
-    """
-    Applies ducking: attenuates pink noise to make space for inserted voice.
-    - pink_noise   : pink noise signal
-    - voice        : voice signal
-    - start_sample : insertion position (samples)
-    - sample_rate  : sampling rate
-    """
-    fade_samples = int(FADE_SEC * sample_rate)
-    end_sample = start_sample + len(voice)
-
-    # Safety: avoid overflow beyond pink noise length
-    if end_sample + fade_samples > len(pink_noise):
-        end_sample = len(pink_noise) - fade_samples
-
-    # Fade curve around voice
-    fade_curve = smooth_fade_curve(fade_samples)
-    sustain_gain = db_to_lin(DUCK_DB)   # background attenuation
-    voice_gain   = db_to_lin(VOICE_DB)  # voice amplification
-
-    # Progressive fade before voice
-    pink_noise[start_sample:start_sample+fade_samples] *= (
-        fade_curve * (1 - sustain_gain) + sustain_gain
-    )
-    # Constant attenuation during voice
-    pink_noise[start_sample+fade_samples:end_sample] *= sustain_gain
-    # Progressive return after voice
-    pink_noise[end_sample:end_sample+fade_samples] *= (
-        fade_curve[::-1] * (1 - sustain_gain) + sustain_gain
-    )
-
-    # Add voice
-    pink_noise[start_sample:end_sample] += voice * voice_gain
-    return pink_noise
-
-
-def build_pink_waves_envelope(total_len_samples, sr):
-    """
-    1D envelope to modulate pink noise in wave-like patterns.
-    """
-    window_samples = int(min(PINK_WAVES_WINDOW_SEC, total_len_samples / sr) * sr)
-    if window_samples <= 0:
-        return np.ones(total_len_samples, dtype=np.float32)
-
-    upN   = max(1, int(PINK_WAVE_UP_SEC   * sr))
-    holdN = max(1, int(PINK_WAVE_HOLD_SEC * sr))
-    downN = max(1, int(PINK_WAVE_DOWN_SEC * sr))
-
-    # Smooth curves: rise = inverted fade, fall = normal fade
-    up   = smooth_fade_curve(upN)[::-1]                  # 0 -> 1
-    hold = np.ones(holdN, dtype=np.float32)              # 1
-    down = smooth_fade_curve(downN)                      # 1 -> 0
-
-    cycle = np.concatenate([up, hold, down]).astype(np.float32)
-
-    # Scale between MIN and MAX
-    amp_min, amp_max = PINK_WAVE_MIN_AMP, PINK_WAVE_MAX_AMP
-    cycle = amp_min + (amp_max - amp_min) * cycle
-
-    # Repeat cycle to cover window
-    reps = window_samples // len(cycle) + 1
-    env_section = np.tile(cycle, reps)[:window_samples]
-
-    # Global envelope = env_section (window 30 min), then 1.0
-    env = np.ones(total_len_samples, dtype=np.float32)
-    env[:window_samples] = env_section
-    return env
-
-
-# ================================
-# 🚀 Main script
-# ================================
 
 if __name__ == "__main__":
     """
@@ -857,3 +863,4 @@ if __name__ == "__main__":
         spinner.loading_stop("Save cancelled")
         time.sleep(1)
         sys.exit()
+
