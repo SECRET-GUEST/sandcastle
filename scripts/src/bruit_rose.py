@@ -12,7 +12,7 @@ except Exception:
 
 import numpy as np
 import soundfile as sf
-from scipy.signal import lfilter
+from scipy.signal import lfilter, resample_poly
 
 # ================================
 # 🔧 Required Libraries
@@ -331,6 +331,58 @@ def compute_rem_windows(total_seconds,
     return windows
 
 
+from scipy.signal import resample_poly
+
+def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
+    """High-quality resample using polyphase filtering (no extra deps)."""
+    if sr_in == sr_out:
+        return x
+    # Use integer ratio for best quality
+    from math import gcd
+    g = gcd(sr_in, sr_out)
+    up = sr_out // g
+    down = sr_in // g
+    # resample_poly expects shape (n,) or (n, ch). We’re mono before calling.
+    y = resample_poly(x, up, down, padtype="line")  # default Kaiser window
+    return y.astype(np.float32, copy=False)
+
+def _ensure_mono_float32(x: np.ndarray) -> np.ndarray:
+    """Convert to mono float32 in [-1, 1]."""
+    if x.ndim == 2:
+        x = np.mean(x, axis=1)
+    x = x.astype(np.float32, copy=False)
+    return x
+
+def load_audio_any(fpath: str, target_sr: int):
+    """
+    Try to read WAV/MP3 with soundfile.
+    Returns (audio_mono_f32, sr_out) where sr_out==target_sr, or (None, None) on failure.
+    """
+    try:
+        # always_2d=False gives (n,) for mono, (n, ch) for stereo
+        data, sr = sf.read(fpath, always_2d=False)
+    except Exception as e:
+        print(f"⚠️ Impossible de lire {os.path.basename(fpath)} : {e}")
+        return None, None
+
+    # To mono float32
+    data = _ensure_mono_float32(data)
+
+    # Normalize *softly* to prevent clipping and keep levels consistent
+    # (assumes you already have normalize_audio; fall back to simple norm if not)
+    try:
+        data = normalize_audio(data)
+    except NameError:
+        peak = np.max(np.abs(data)) or 1.0
+        data = (data / peak) * 0.95
+
+    # Resample if needed
+    data = _resample_to_target(data, sr, target_sr)
+    return data, target_sr
+
+
+
+
 def integrate_suggestions(pink_noise, sample_rate, total_duration, start_delay_sec):
     """
     Places audio suggestions while respecting:
@@ -341,12 +393,14 @@ def integrate_suggestions(pink_noise, sample_rate, total_duration, start_delay_s
       - Minimum gap between suggestions 
         (SUGG_MIN_GAP_BASE_S + voice_length * SUGG_GAP_FACTOR)
     """
+
     suggest_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../Assets/SFX/Suggests"))
     if not os.path.isdir(suggest_path):
         print("⚠️ Suggestions folder not found:", suggest_path)
         return pink_noise
 
-    file_names = [f for f in os.listdir(suggest_path) if f.lower().endswith(".wav")]
+    # Accepts both WAV and MP3
+    file_names = [f for f in os.listdir(suggest_path) if f.lower().endswith((".wav", ".mp3"))]
     if not file_names:
         print("⚠️ No suggestion files found.")
         return pink_noise
@@ -391,9 +445,10 @@ def integrate_suggestions(pink_noise, sample_rate, total_duration, start_delay_s
                 return None
             u = rng.random()
             if towards_end:
-                # Quadratic bias toward the end
-                u = u ** 2
+                # Quadratic bias toward the END (close to 1)
+                u = 1 - (1 - u)**2
             return lo + (hi - lo) * u
+
 
         passes = 0
         max_passes = 3 if SUGG_REUSE_FILES else 1
@@ -401,18 +456,14 @@ def integrate_suggestions(pink_noise, sample_rate, total_duration, start_delay_s
         while used_time_s < occ_limit_s and passes < max_passes:
             for idx in order:
                 fpath = file_paths[idx]
-                try:
-                    voice_data, sr = sf.read(fpath)
-                except Exception as e:
-                    print(f"⚠️ Could not read {os.path.basename(fpath)}:", e)
+                # ✅ Universal loader with auto-resampling to target `sample_rate`
+                voice_data, _sr = load_audio_any(fpath, sample_rate)
+                if voice_data is None:
+                    # MP3 not supported by libsndfile → skip gracefully
+                    if fpath.lower().endswith(".mp3"):
+                        print(f"⚠️ {os.path.basename(fpath)} ignored (MP3 not supported by your libsndfile).")
                     continue
-
-                if sr != sample_rate:
-                    print(f"⚠️ {os.path.basename(fpath)} skipped (sample rate {sr} ≠ {sample_rate}).")
-                    continue
-
-                voice_data = ensure_mono(voice_data).astype(np.float32)
-                voice_data = normalize_audio(voice_data)
+                
                 voice_len_s = len(voice_data) / sample_rate
 
                 # Window occupancy limit
