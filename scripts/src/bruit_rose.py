@@ -389,10 +389,15 @@ def compute_rem_windows(total_seconds,
     return windows
 
 
+
+
+# ================================
+# 🎛 Suggestions audio
+# ================================
+
 def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
     """
     Rééchantillonne `x` de sr_in → sr_out avec filtrage polyphasé.
-    - Pas besoin de lib externe (utilise scipy).
     - Préserve une bonne qualité (fenêtre de Kaiser par défaut).
     """
     if sr_in == sr_out:
@@ -402,6 +407,8 @@ def _resample_to_target(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
     up = sr_out // g
     down = sr_in // g
     return resample_poly(x, up, down, padtype="line").astype(np.float32, copy=False)
+
+
 
 def _ensure_mono_float32(x: np.ndarray) -> np.ndarray:
     """
@@ -687,6 +694,93 @@ def build_kick_track(total_len_samples, sample_rate=SAMPLE_RATE):
     return kick_track
 
 
+# ================================
+# 🎵 Génération bruit rose + mix
+# ================================
+
+
+def apply_ducking(pink_noise, voice, start_sample, sample_rate):
+
+    """
+    Applique un "ducking" : atténue le bruit rose pour laisser
+    de la place à la voix insérée.
+    - pink_noise   : signal de bruit rose
+    - voice        : signal voix
+    - start_sample : position d’insertion (échantillons)
+    - sample_rate  : fréquence d’échantillonnage
+    """
+
+    fade_samples = int(FADE_SEC * sample_rate)
+    end_sample = start_sample + len(voice)
+
+    # Sécurité : éviter de dépasser la longueur du bruit rose
+    if end_sample + fade_samples > len(pink_noise):
+        end_sample = len(pink_noise) - fade_samples
+
+    # Courbe de fondu autour de la voix
+    fade_curve = smooth_fade_curve(fade_samples)
+    sustain_gain = db_to_lin(DUCK_DB)   # atténuation du fond
+    voice_gain   = db_to_lin(VOICE_DB)  # amplification de la voix
+
+    # Atténuation progressive avant la voix
+    pink_noise[start_sample:start_sample+fade_samples] *= (
+        fade_curve * (1 - sustain_gain) + sustain_gain
+    )
+    # Atténuation constante pendant la voix
+    pink_noise[start_sample+fade_samples:end_sample] *= sustain_gain
+    # Retour progressif après la voix
+    pink_noise[end_sample:end_sample+fade_samples] *= (
+        fade_curve[::-1] * (1 - sustain_gain) + sustain_gain
+    )
+
+    # Ajout de la voix
+    pink_noise[start_sample:end_sample] += voice * voice_gain
+    return pink_noise
+
+
+def build_pink_waves_envelope(total_len_samples, sr):
+
+    """
+    Envelope 1D pour moduler le bruit rose en vagues sur la fenêtre définie.
+    """
+
+    window_samples = int(min(PINK_WAVES_WINDOW_SEC, total_len_samples / sr) * sr)
+    if window_samples <= 0:
+        return np.ones(total_len_samples, dtype=np.float32)
+
+    upN   = max(1, int(PINK_WAVE_UP_SEC   * sr))
+    holdN = max(1, int(PINK_WAVE_HOLD_SEC * sr))
+    downN = max(1, int(PINK_WAVE_DOWN_SEC * sr))
+
+    # courbes douces: montée = fade inversé, descente = fade standard
+    up   = smooth_fade_curve(upN)[::-1]                  # 0 -> 1
+    hold = np.ones(holdN, dtype=np.float32)              # 1
+    down = smooth_fade_curve(downN)                      # 1 -> 0
+
+    cycle = np.concatenate([up, hold, down]).astype(np.float32)
+
+    # Mise à l'échelle entre MIN et MAX
+    amp_min, amp_max = PINK_WAVE_MIN_AMP, PINK_WAVE_MAX_AMP
+    cycle = amp_min + (amp_max - amp_min) * cycle
+
+    # Répéter le cycle pour couvrir la fenêtre
+    reps = window_samples // len(cycle) + 1
+    env_section = np.tile(cycle, reps)[:window_samples]
+
+    # Enveloppe globale = env_section (fenêtre 30 min), puis 1.0
+    env = np.ones(total_len_samples, dtype=np.float32)
+    env[:window_samples] = env_section
+    return env
+
+
+
+
+# ================================
+# 🚀 Script principal
+# ================================
+
+
+
 def main_generate(duree_totale, fade_out, save_path, kick_enabled=True, waves_enabled=True):
     """
     Génère la piste audio complète (bruit rose + vagues + kick + voix).
@@ -765,90 +859,8 @@ def main_generate(duree_totale, fade_out, save_path, kick_enabled=True, waves_en
     finally:
         # Nettoyage du contenu de TEMP_DIR
         clear_temp_dir()
+        
 
-
-# ================================
-# 🎵 Génération bruit rose + mix
-# ================================
-
-def apply_ducking(pink_noise, voice, start_sample, sample_rate):
-
-    """
-    Applique un "ducking" : atténue le bruit rose pour laisser
-    de la place à la voix insérée.
-    - pink_noise   : signal de bruit rose
-    - voice        : signal voix
-    - start_sample : position d’insertion (échantillons)
-    - sample_rate  : fréquence d’échantillonnage
-    """
-
-    fade_samples = int(FADE_SEC * sample_rate)
-    end_sample = start_sample + len(voice)
-
-    # Sécurité : éviter de dépasser la longueur du bruit rose
-    if end_sample + fade_samples > len(pink_noise):
-        end_sample = len(pink_noise) - fade_samples
-
-    # Courbe de fondu autour de la voix
-    fade_curve = smooth_fade_curve(fade_samples)
-    sustain_gain = db_to_lin(DUCK_DB)   # atténuation du fond
-    voice_gain   = db_to_lin(VOICE_DB)  # amplification de la voix
-
-    # Atténuation progressive avant la voix
-    pink_noise[start_sample:start_sample+fade_samples] *= (
-        fade_curve * (1 - sustain_gain) + sustain_gain
-    )
-    # Atténuation constante pendant la voix
-    pink_noise[start_sample+fade_samples:end_sample] *= sustain_gain
-    # Retour progressif après la voix
-    pink_noise[end_sample:end_sample+fade_samples] *= (
-        fade_curve[::-1] * (1 - sustain_gain) + sustain_gain
-    )
-
-    # Ajout de la voix
-    pink_noise[start_sample:end_sample] += voice * voice_gain
-    return pink_noise
-
-
-def build_pink_waves_envelope(total_len_samples, sr):
-
-    """
-    Envelope 1D pour moduler le bruit rose en vagues sur la fenêtre définie.
-    """
-
-    window_samples = int(min(PINK_WAVES_WINDOW_SEC, total_len_samples / sr) * sr)
-    if window_samples <= 0:
-        return np.ones(total_len_samples, dtype=np.float32)
-
-    upN   = max(1, int(PINK_WAVE_UP_SEC   * sr))
-    holdN = max(1, int(PINK_WAVE_HOLD_SEC * sr))
-    downN = max(1, int(PINK_WAVE_DOWN_SEC * sr))
-
-    # courbes douces: montée = fade inversé, descente = fade standard
-    up   = smooth_fade_curve(upN)[::-1]                  # 0 -> 1
-    hold = np.ones(holdN, dtype=np.float32)              # 1
-    down = smooth_fade_curve(downN)                      # 1 -> 0
-
-    cycle = np.concatenate([up, hold, down]).astype(np.float32)
-
-    # Mise à l'échelle entre MIN et MAX
-    amp_min, amp_max = PINK_WAVE_MIN_AMP, PINK_WAVE_MAX_AMP
-    cycle = amp_min + (amp_max - amp_min) * cycle
-
-    # Répéter le cycle pour couvrir la fenêtre
-    reps = window_samples // len(cycle) + 1
-    env_section = np.tile(cycle, reps)[:window_samples]
-
-    # Enveloppe globale = env_section (fenêtre 30 min), puis 1.0
-    env = np.ones(total_len_samples, dtype=np.float32)
-    env[:window_samples] = env_section
-    return env
-
-
-
-# ================================
-# 🚀 Script principal
-# ================================
 
 if __name__ == "__main__":
 
@@ -936,4 +948,5 @@ if __name__ == "__main__":
         spinner.loading_stop("Enregistrement annulé")
         time.sleep(1)
         sys.exit()
+
 
