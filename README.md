@@ -14,9 +14,6 @@
 
 ![ALPHA](https://img.shields.io/badge/ALPHA-red)
 
-<img width="1024" height="1024" alt="sandcastle" src="https://github.com/user-attachments/assets/47f28bb7-7c3e-46ff-b2b5-4601de0aee12" />
-
-
 # 🎧 ** Generateur de bruit rose pour dormir **
 
 ---
@@ -142,8 +139,4 @@ Les suggestions sont automatiquement placées juste avant ou pendant la phase RE
 
 💡 **Astuce** : Utilisez **votre propre voix** pour les suggestions. Le cerveau la perçoit comme une pensée interne → impact renforcé.
 
-
-
-
-
-
+<img width="1024" height="1024" alt="sandcastle" src="https://github.com/user-attachments/assets/47f28bb7-7c3e-46ff-b2b5-4601de0aee12" />
