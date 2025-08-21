@@ -14,7 +14,7 @@
 
 ![ALPHA](https://img.shields.io/badge/ALPHA-red)
 
-# 🎧 **Pink Noise Generator & Oniromancy**
+# 🎧 **Pink Noise Generator**
 
 ## [Une version francaise est disponible dans la branche FR](https://github.com/SECRET-GUEST/sandcastle/tree/FR)
 ---
